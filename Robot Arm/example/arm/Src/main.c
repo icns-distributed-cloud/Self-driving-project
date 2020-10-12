@@ -106,11 +106,11 @@ void example(void){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	MOTOR_PWM[0]=620;//방향
-	MOTOR_PWM[1]=120;//관절3
-	MOTOR_PWM[2]=430;//집게
-	MOTOR_PWM[3]=110;//관절1
-	MOTOR_PWM[4]=400;//관절2
+	MOTOR_PWM[0]=620;//direction
+	MOTOR_PWM[1]=120;//joint3
+	MOTOR_PWM[2]=430;//clamp
+	MOTOR_PWM[3]=110;//joint1
+	MOTOR_PWM[4]=400;//joint2
   /* USER CODE END 1 */
   
 
