@@ -1,0 +1,14 @@
+usbh_cdc.c:415:27:USBH_CDC_SOFProcess	0	static
+usbh_cdc.c:269:27:USBH_CDC_InterfaceDeInit	16	static
+usbh_cdc.c:151:27:USBH_CDC_InterfaceInit	40	static
+usbh_cdc.c:310:27:USBH_CDC_ClassRequest	16	static
+usbh_cdc.c:427:21:USBH_CDC_Stop	16	static
+usbh_cdc.c:491:20:USBH_CDC_SetLineCoding	0	static
+usbh_cdc.c:519:21:USBH_CDC_GetLineCoding	0	static
+usbh_cdc.c:540:10:USBH_CDC_GetLastReceivedDataSize	8	static
+usbh_cdc.c:562:21:USBH_CDC_Transmit	0	static
+usbh_cdc.c:593:21:USBH_CDC_Receive	0	static
+usbh_cdc.c:777:13:USBH_CDC_TransmitCallback	0	static
+usbh_cdc.c:787:13:USBH_CDC_ReceiveCallback	0	static
+usbh_cdc.c:797:13:USBH_CDC_LineCodingChanged	0	static
+usbh_cdc.c:331:27:USBH_CDC_Process	24	static
