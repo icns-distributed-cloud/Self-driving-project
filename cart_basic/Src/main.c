@@ -45,7 +45,7 @@ int32_t error_speed[4] = {0};
 int32_t PID_speed[4] = {0};
 uint32_t old_PID_speed[4] = {3000, 3000, 3000, 3000};
 
-/***********lidar************/
+//lidar
 //response data
 bool scan_start = false;
 uint8_t rx3_start[7] = {0};
@@ -116,6 +116,8 @@ int16_t array_avg_compare(uint16_t distance[]){
 
    return avg_diff;
 }
+
+//Encoder
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)	//Timer interrupt every 20ms
 {
 	if(htim->Instance == TIM6){
@@ -197,7 +199,7 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-
+  //wait
   HAL_Delay(3000);
 
   //Initialize for motor PWM
@@ -428,9 +430,7 @@ int main(void)
 			 TIM1->CCR4 = 0;
 
 		  }
-	  HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_RESET);
-	  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, RESET);
-	  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, RESET);
+
 	  rx2_data = 0;
 
  }
