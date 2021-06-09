@@ -155,7 +155,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)	//Timer interrupt ev
 		old_PID_speed[2] = PID_speed[2];
 		old_PID_speed[3] = PID_speed[3];
 	}
-}
+	}
 
 /* USER CODE END 0 */
 
@@ -237,6 +237,7 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim6);
 
   //LIDAR_scan_start
+  //Uncomment
   //HAL_UART_Transmit(&huart3, &scan_command, 2, 100);
 
   //robotArm to Cart
@@ -259,6 +260,7 @@ int main(void)
 			 d = (rx3_data[4]<<8 | rx3_data[3])/4;
 			 if(d >= 5000){
 				distance[angle] = 5000;
+				//distance[angle] = 3000;
 			 }
 			 else{
 				distance[angle] = d;
@@ -268,11 +270,17 @@ int main(void)
 			 if(S == 1){
 				avg_DIFF = array_avg_compare(distance);
 				//printf("%d\r\n", avg_DIFF);
+				
 				MOTER_PWM[0] = PID_speed + avg_DIFF;
 				MOTER_PWM[1] = PID_speed - avg_DIFF;
 				MOTER_PWM[2] = PID_speed + avg_DIFF;
 				MOTER_PWM[3] = PID_speed - avg_DIFF;
+				
+				// Without Encoder
+				// MOTER_PWM[0] = 3000 + avg_DIFF;
 				memset(distance, 0, 360);
+				 
+				
 			 }
 		  }
 	   }
@@ -301,137 +309,121 @@ int main(void)
 	   }
 
 
+	// Serial Communication with Robotarm stm
+	if(rx2_data == 1){
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, SET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, RESET);
 
-		if(rx2_data == 1){
-			TIM1->CCR1 = 0;
-			TIM1->CCR2 = 0;
-			TIM1->CCR3 = 0;
-			TIM1->CCR4 = 0;
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, SET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, RESET);
 
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, SET);
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, RESET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, SET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, RESET);
 
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, SET);
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, RESET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, SET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, RESET);
+		TIM1->CCR1 = 0;
+		TIM1->CCR2 = 0;
+		TIM1->CCR3 = 0;
+		TIM1->CCR4 = 0;
 
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, SET);
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, RESET);
+	}else if(rx2_data == 2){
+		TIM1->CCR1 = 8000;
+		TIM1->CCR2 = 8000;
+		TIM1->CCR3 = 8000;
+		TIM1->CCR4 = 8000;
+		
+	}else if(rx2_data == 3){
+		//reverse
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, SET);
 
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, SET);
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, SET);
 
-		}else if(rx2_data == 2){
-			TIM1->CCR1 = 8000;
-			TIM1->CCR2 = 8000;
-			TIM1->CCR3 = 8000;
-			TIM1->CCR4 = 8000;
-		}else if(rx2_data == 3){
-			//reverse
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, RESET);
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, SET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, RESET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, SET);
 
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, RESET);
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, SET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, RESET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, SET);
+		TIM1->CCR1 = 8000;
+		TIM1->CCR2 = 8000;
+		TIM1->CCR3 = 8000;
+		TIM1->CCR4 = 8000;
+		//HAL_Delay(1000);
+		
+	}else if(rx2_data==3){
+		TIM1->CCR1 = speed_turn;
+		TIM1->CCR2 = speed_turn;
+		TIM1->CCR3 = speed_turn;
+		TIM1->CCR4 = speed_turn;
 
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, RESET);
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, SET);
+		HAL_Delay(1000);
 
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, RESET);
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, SET);
-			TIM1->CCR1 = 8000;
-			TIM1->CCR2 = 8000;
-			TIM1->CCR3 = 8000;
-			TIM1->CCR4 = 8000;
-			HAL_Delay(1000);
-		}else if(rx2_data==3){
-			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, RESET);
-			HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, RESET);
-			 //turn right
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, SET);
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, RESET);
-
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, RESET);
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, SET);
-
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, SET);
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, RESET);
-
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, RESET);
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, SET);
-
-			TIM1->CCR1 = speed_turn;
-			TIM1->CCR2 = speed_turn;
-			TIM1->CCR3 = speed_turn;
-			TIM1->CCR4 = speed_turn;
-
-			HAL_Delay(1000);
-
-			TIM1->CCR1 = 0;
-			TIM1->CCR2 = 0;
-			TIM1->CCR3 = 0;
-			TIM1->CCR4 = 0;
+		TIM1->CCR1 = 0;
+		TIM1->CCR2 = 0;
+		TIM1->CCR3 = 0;
+		TIM1->CCR4 = 0;
 
 
-			//forward
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, SET);
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, RESET);
+		//forward
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, SET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, RESET);
 
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, SET);
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, RESET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, SET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, RESET);
 
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, SET);
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, RESET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, SET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, RESET);
 
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, SET);
-			HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, RESET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, SET);
+		HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, RESET);
 
-			//HAL_Delay(1000);
+		//HAL_Delay(1000);
+		
+		// Lidar Start Command, Put it on top
+		//HAL_UART_Transmit(&huart3, &scan_command, 2, 100);
 
-			HAL_UART_Transmit(&huart3, &scan_command, 2, 100);
+	}else if(rx2_data == 5){
+		  HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET);
+		  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, RESET);
+		  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, RESET);
 
-		}else if(rx2_data == 5){
-			  HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,GPIO_PIN_SET);
-			  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_4, RESET);
-			  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_5, RESET);
+		 HAL_UART_Transmit(&huart3, &stop_command, 2, 100);
+		 avg_DIFF = 0;
 
-			 HAL_UART_Transmit(&huart3, &stop_command, 2, 100);
-			 avg_DIFF = 0;
+		 TIM1->CCR1 = 0;
+		 TIM1->CCR2 = 0;
+		 TIM1->CCR3 = 0;
+		 TIM1->CCR4 = 0;
+		 HAL_Delay(1000);
 
-			 TIM1->CCR1 = 0;
-			 TIM1->CCR2 = 0;
-			 TIM1->CCR3 = 0;
-			 TIM1->CCR4 = 0;
-			 HAL_Delay(1000);
+		 //turn right
+		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, SET);
+		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, RESET);
 
-			 //turn right
-			 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, SET);
-			 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, RESET);
+		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, RESET);
+		 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, SET);
 
-			 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, RESET);
-			 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, SET);
+		 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, SET);
+		 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, RESET);
 
-			 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_8, SET);
-			 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_9, RESET);
+		 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, RESET);
+		 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, SET);
 
-			 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_10, RESET);
-			 HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, SET);
+		 TIM1->CCR1 = speed_turn;
+		 TIM1->CCR2 = speed_turn;
+		 TIM1->CCR3 = speed_turn;
+		 TIM1->CCR4 = speed_turn;
 
-			 TIM1->CCR1 = speed_turn;
-			 TIM1->CCR2 = speed_turn;
-			 TIM1->CCR3 = speed_turn;
-			 TIM1->CCR4 = speed_turn;
+		 HAL_Delay(1000);
 
-			 HAL_Delay(1000);
+		 TIM1->CCR1 = 0;
+		 TIM1->CCR2 = 0;
+		 TIM1->CCR3 = 0;
+		 TIM1->CCR4 = 0;
 
-			 TIM1->CCR1 = 0;
-			 TIM1->CCR2 = 0;
-			 TIM1->CCR3 = 0;
-			 TIM1->CCR4 = 0;
-
-		  }
-
-	  rx2_data = 0;
+	  }
 
  }
 
