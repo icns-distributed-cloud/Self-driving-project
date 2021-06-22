@@ -1,0 +1,8 @@
+main.c:90:10:micros	4	static
+main.c:94:6:Delay_us	32	static
+main.c:107:6:HAL_GPIO_EXTI_Callback	24	static
+main.c:132:5:main	8	static
+main.c:233:6:SystemClock_Config	104	static
+main.c:283:13:MX_NVIC_Init	8	static
+main.c:294:6:HAL_UART_RxCpltCallback	16	static
+main.c:306:6:Error_Handler	4	static
