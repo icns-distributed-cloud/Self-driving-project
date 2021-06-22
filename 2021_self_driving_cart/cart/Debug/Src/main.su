@@ -1,0 +1,8 @@
+main.c:97:6:array_element_of_index_equal	32	static
+main.c:105:9:array_avg_compare	48	static
+main.c:135:6:HAL_TIM_PeriodElapsedCallback	24	static
+main.c:180:5:main	8	static
+main.c:303:6:SystemClock_Config	88	static
+main.c:345:13:MX_NVIC_Init	8	static
+main.c:356:6:HAL_UART_RxCpltCallback	16	static
+main.c:368:6:Error_Handler	4	static
